@@ -1,74 +1,37 @@
-#include<stdio.h>
-#include "data_management.h"
-
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "dataManagement.h"
 int main() {
     const char *filename = "test.csv";
-    int target_id,choose=0;
-    // choose the operation you want
-    printf(" Enter 1 to display student data  \n");
-    printf(" Enter 2 to Add student data      \n ");
-    printf("Enter 3 to delete student data   \n ");
-    printf("Enter 4 to update student data   \n");
-    scanf("%d",&choose);
-    if(choose == 1){
+    StudentRecord student;
 
-    printf("Enter the ID of the student: ");
-    scanf("%d", &target_id);
+    int targetId;
+    printf("Enter the ID of the student you want to edit: ");
+    scanf("%d", &targetId);
 
-    // Read student data from file into structure based on given ID
-    struct Student student = readStudentFromFile(filename, target_id);
-
-    // Check if student with given ID exists
-    if (student.id != 0) {
-        // Print the data
-        printf("Student ID: %d\n", student.id);
-        printf("Name: %s\n", student.name);
-        printf("Degree: %s\n", student.degree);
-    } else {
-        printf("Student with ID %d not found.\n", target_id);
+    if (readStudentRecord(filename, targetId, &student) == 0) {
+        printf("Failed to find student with ID %d.\n", targetId);
+        return 1;
     }
-}else if(choose == 2){
-   struct Student student;
 
-    // Get student data from user
-    printf("Enter student ID: ");
-    scanf("%d", &student.id);
+    char newName[50];
+    char newCourse[50];
+    float newGPA;
 
-    printf("Enter student name: ");
-    scanf("%s", &student.name);
+    printf("Enter new name for the student: ");
+    scanf("%49s", newName);
 
-    printf("Enter student degree: ");
-    scanf("%s", &student.degree);
+    printf("Enter new course for the student: ");
+    scanf("%49s", newCourse);
 
-    // Add student data to file
-    addStudentToFile(filename, student);
+    printf("Enter new GPA for the student: ");
+    scanf("%f", &newGPA);
 
-    printf("Student data added to file successfully.\n");
+    editStudentRecord(&student, newName, newCourse, newGPA);
 
-    }else if(choose == 3){
-    printf("Enter ID of student to delete : ");
-
-    scanf("%d", &target_id);
-
-    // Read student data from file into structure based on given ID
-    struct Student student = readStudentFromFile(filename, target_id);
-
-    // Check if student with given ID exists
-    if (student.id != 0) {
-            int per;
-        // Print the data
-        printf("Student ID: %d\n", student.id);
-        printf("Name: %s\n", student.name);
-        printf("Degree: %s\n", student.degree);
-        printf("To delete enter 0 : ");
-        scanf("%d",&per);
-    if(per == 0){
-        deleteStudentFromFile(filename,target_id);
-    }
-    } else {
-        printf("Student with ID %d not found.\n", target_id);
-    }
-    }
+    printf("\nUpdated records:\n");
+    printf("ID: %d, Name: %s, Course: %s, GPA: %.2f\n", student.id, student.name, student.course, student.gpa);
 
     return 0;
 }
